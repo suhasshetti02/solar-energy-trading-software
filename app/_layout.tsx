@@ -1,24 +1,29 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { LogBox } from 'react-native';
 import 'react-native-reanimated';
+import { AuthProvider } from '../src/context/AuthContext';
+import { ConnectivityProvider } from '../src/context/ConnectivityContext';
+import { EnergyProvider } from '../src/context/EnergyContext';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+LogBox.ignoreLogs([
+  'Could not reach Cloud Firestore backend',
+  'Fetching auth token failed',
+]);
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <ConnectivityProvider>
+      <AuthProvider>
+        <EnergyProvider>
+          <StatusBar style="light" backgroundColor="#0D0D0D" />
+          <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(main)" />
+          </Stack>
+        </EnergyProvider>
+      </AuthProvider>
+    </ConnectivityProvider>
   );
 }

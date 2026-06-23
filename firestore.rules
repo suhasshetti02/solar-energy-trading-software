@@ -1,0 +1,80 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function userHouseId() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.houseId;
+    }
+
+    // ── users ─────────────────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read, update, delete: if isOwner(userId);
+      allow create: if signedIn();
+    }
+
+    // ── houses ────────────────────────────────────────────────────────────────
+    match /houses/{houseId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn();
+      allow delete: if false;
+    }
+
+    // ── system (grid_state) ───────────────────────────────────────────────────
+    match /system/{docId} {
+      allow read: if signedIn();
+      allow write: if signedIn(); // For simulator/tests
+    }
+
+    // ── hardware integration ──────────────────────────────────────────────────
+    match /hardware_events/{eventId} {
+      allow read, create: if signedIn();
+    }
+    match /hardware_commands/{cmdId} {
+      allow read, create, update: if signedIn();
+    }
+
+    // ── requests & offers (Phase 2 & 3) ───────────────────────────────────────
+    match /energy_requests/{reqId} {
+      allow read, create, update: if signedIn();
+    }
+    match /broadcast_requests/{reqId} {
+      allow read, create, update: if signedIn();
+    }
+    match /energy_offers/{offerId} {
+      allow read, create, update: if signedIn();
+    }
+    match /transfer_sessions/{sessionId} {
+      allow read, create, update: if signedIn();
+    }
+
+    // ── transactions ──────────────────────────────────────────────────────────
+    match /transactions/{txId} {
+      allow read: if signedIn()
+                  && (resource.data.donorUserId == request.auth.uid
+                      || resource.data.receiverUserId == request.auth.uid
+                      || resource.data.donor_id == request.auth.uid
+                      || resource.data.receiver_id == request.auth.uid);
+      allow create: if signedIn();
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ── notifications ─────────────────────────────────────────────────────────
+    match /notifications/{noteId} {
+      allow read: if signedIn()
+                  && resource.data.userId == request.auth.uid;
+      allow create: if signedIn();
+      allow update: if signedIn()
+                    && resource.data.userId == request.auth.uid;
+      allow delete: if false;
+    }
+  }
+}

@@ -1,50 +1,63 @@
-# Welcome to your Expo app 👋
+# Smart Grid Energy
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A mobile application for monitoring and managing a smart grid energy network. Built with React Native (Expo) and Firebase, it allows users to view real-time energy flow, monitor battery and solar generation, manage P2P energy sharing between connected households, and track hardware events.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **Real-Time Dashboard**: Monitor solar generation, home consumption, and battery storage.
+- **Hardware Monitoring**: View live hardware status (contactors, availability mode, grid connection) and diagnostic logs.
+- **P2P Energy Trading**: Share excess energy with neighbors connected to the same grid bus.
+- **Energy Wallet**: Track energy credits earned from sharing and spent on drawing.
+- **Push Notifications**: Receive alerts for hardware faults, power routing changes, and incoming energy requests.
 
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18+)
+- [Expo CLI](https://docs.expo.dev/get-started/installation/) (`npm install -g expo-cli`)
+- [Firebase CLI](https://firebase.google.com/docs/cli) (optional, for deploying rules)
+
+## Installation
+
+1. **Clone the repository** (if you haven't already):
+   ```bash
+   git clone <repository-url>
+   cd smartgrid-app
+   ```
+
+2. **Install dependencies**:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. **Bootstrap Demo Data (Optional but Recommended)**:
+   This deploys the necessary Firestore security rules, creates demo user accounts, and seeds the initial Firebase database structures.
    ```bash
-   npx expo start
+   npm run demo:bootstrap
    ```
 
-In the output, you'll find options to open the app in a
+## Running the Application
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+To run the full simulation locally, you will need to start both the mobile app and the hardware simulator.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### 1. Start the Hardware Simulator
+The `simulateHardware.js` script mimics the live ESP32 microcontrollers that report house generation, consumption, and battery levels, as well as the main grid contactor states. This populates Firebase with real-time changing data.
 
-## Get a fresh project
-
-When you're ready, run:
-
+Open a terminal and run:
 ```bash
-npm run reset-project
+node simulateHardware.js
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Start the Mobile App
+In a separate terminal, start the Expo development server:
+```bash
+npm start
+```
+From here, you can press `a` to open on an Android emulator, `i` to open on an iOS simulator, or scan the QR code with the Expo Go app on your physical device.
 
-## Learn more
+## Demo Accounts
 
-To learn more about developing your project with Expo, look at the following resources:
+If you ran the `demo:bootstrap` command, you can log in to the app using any of the following demo accounts:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **House A**: `h1.demo@solarshare.com` (Password: `password123`)
+- **House B**: `h2.demo@solarshare.com` (Password: `password123`)
+- **House C**: `h3.demo@solarshare.com` (Password: `password123`)
