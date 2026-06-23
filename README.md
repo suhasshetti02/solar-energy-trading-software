@@ -50,7 +50,7 @@ node simulateHardware.js
 ### 2. Start the Mobile App
 In a separate terminal, start the Expo development server:
 ```bash
-npm start
+npm expo start
 ```
 From here, you can press `a` to open on an Android emulator, `i` to open on an iOS simulator, or scan the QR code with the Expo Go app on your physical device.
 
